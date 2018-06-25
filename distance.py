@@ -19,8 +19,18 @@ def main():
     names, sequences = oligo.read_fasta_lists( options.query )
     names, sequences = sort_sequences_by_length( names, sequences )
 
+    # Get the sequences sorted from biggest->smallest
     names.reverse()
     sequences.reverse()
+
+    for index in range( len( sequences ) ):
+        current_xmers = oligo.subset_lists_iter( sequences[ index ], options.XmerWindowSize, 1 )
+
+        for inner_index in range( len( sequences ) ):
+            current_compare_xmers = oligo.subset_lists_iter( sequences[ inner_index ], options.XmerWindowSize, 1 )
+            intersection = len( current_xmers & current_compare_xmers )
+
+            print( ( intersection / len( current_xmers ) ) * 100 )
 
 
 def add_program_options( options ):
