@@ -29,6 +29,9 @@ def add_program_options( options ):
     # TODO: Add description of format of output file  
     options.add_option( '-o', '--output', help = "File to write program output to. [out.txt]", default = "out.txt" )
 
+    options.add_option( '-x', '--XmerWindowSize', help = "Size of xmers to grab from each sequence to do the comparisons [19]", type = int,
+                        default = 19 )
+
 
 def sort_sequences_by_length( names_list, sequence_list ):
     sequence_dict = {}
