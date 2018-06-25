@@ -199,21 +199,22 @@ def append_suffix( string, start, end ):
    return "%s_%s_%s" % ( string, str( start ), str( end ) ) 
 
 
-def subset_lists_iter( index, sequence, window_size, step_size ):
-    xmer_dict={}
+def subset_lists_iter( sequence, window_size, step_size ):
+    xmer_set= set()
 
     start = 0
     end = window_size
 
     while end <= len( sequence ):
-        xmer = sequence[start:end]
-        if xmer in xmer_dict: xmer_dict[xmer].append(append_suffix( str(index), start + 1, end ))
-        else: xmer_dict[xmer] = [append_suffix( str(index), start + 1, end )]
+        xmer = sequence[ start:end ]
+
+        if not 'X' in xmer:
+            xmer_set.add( xmer )
 
         start += step_size
         end = start + step_size + window_size - 1
 
-    return xmer_dict
+    return xmer_set
 
 def subset_lists( name, sequence, window_size, step_size ):
    """
