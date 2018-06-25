@@ -19,14 +19,22 @@ def main():
     names, sequences = oligo.read_fasta_lists( options.query )
     names, sequences = sort_sequences_by_length( names, sequences )
 
-    # Get the sequences sorted from biggest->smallest
+    # Get the sequences sorted in increasing order
     names.reverse()
     sequences.reverse()
 
+    out_file = open( options.output, 'w' )
+    
     for index in range( len( sequences ) ):
-        get_distance_from_other_sequences( sequences[ index ], sequences, options.XmerWindowSize, 1 )
+        current_distances = get_distance_from_other_sequences( sequences[ index ],
+                                                               sequences,
+                                                               options.XmerWindowSize, 1
+                                                             )
+        for item in range( len( current_distances ) ):
+            out_file.write( "%s\t%s\t%f\n" % ( names[ index ], names[ item ], current_distances[ item ] ) )
+            
 
-
+    out_file.close()        
 
 def add_program_options( options ):
     options.add_option( '-q', '--query', help = "Fasta query file to perform calculations on. [None, required]" )
