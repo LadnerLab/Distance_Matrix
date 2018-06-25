@@ -55,7 +55,7 @@ def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_
         current_xmer_comparison = oligo.subset_lists_iter( current_seq, window_size, step_size )
         intersection = len( current_xmers & current_xmer_comparison )
 
-        return_list.append( ( intersection / len( current_xmers ) ) )
+        return_list.append( ( intersection / len( current_xmers ) * 100 ) )
 
     return return_list
         
