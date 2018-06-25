@@ -24,13 +24,8 @@ def main():
     sequences.reverse()
 
     for index in range( len( sequences ) ):
-        current_xmers = oligo.subset_lists_iter( sequences[ index ], options.XmerWindowSize, 1 )
+        get_distance_from_other_sequences( sequences[ index ], sequences, options.XmerWindowSize, 1 )
 
-        for inner_index in range( len( sequences ) ):
-            current_compare_xmers = oligo.subset_lists_iter( sequences[ inner_index ], options.XmerWindowSize, 1 )
-            intersection = len( current_xmers & current_compare_xmers )
-
-            print( ( intersection / len( current_xmers ) ) * 100 )
 
 
 def add_program_options( options ):
@@ -42,6 +37,20 @@ def add_program_options( options ):
     options.add_option( '-x', '--XmerWindowSize', help = "Size of xmers to grab from each sequence to do the comparisons [19]", type = int,
                         default = 19 )
 
+
+def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_size ):
+    return_list = list()
+
+    current_xmers = oligo.subset_lists_iter( in_seq, window_size, step_size )
+
+    for current_seq in sequence_list:
+        current_xmer_comparison = oligo.subset_lists_iter( current_seq, window_size, step_size )
+        intersection = len( current_xmers & current_xmer_comparison )
+
+        return_list.append( ( intersection / len( current_xmers ) ) * 100 )
+
+    return return_list
+        
 
 def sort_sequences_by_length( names_list, sequence_list ):
     sequence_dict = {}
