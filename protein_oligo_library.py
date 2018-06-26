@@ -254,3 +254,46 @@ def component_xmer_locs(ymer, xdict, xmer_size, step_size):
         xmer_locs += xdict[each]
     return set(xmer_locs)
     
+def get_single_sequence_dist( first_seq, second_seq, window_size, step_size ):
+    first_seq_ymers = subset_lists_iter( first_seq, window_size, step_size )
+    second_seq_ymers = subset_lists_iter( second_seq, window_size, step_size )
+
+    intersection = len( first_seq_ymers & second_seq_ymers )
+
+    return intersection / len( first_seq_ymers ) * 100 
+
+
+def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_size ):
+    return_list = list()
+
+    current_xmers = subset_lists_iter( in_seq, window_size, step_size )
+
+    for current_seq in sequence_list:
+        current_xmer_comparison = subset_lists_iter( current_seq, window_size, step_size )
+        intersection = len( current_xmers & current_xmer_comparison )
+
+        return_list.append( ( intersection / len( current_xmers ) * 100 ) )
+
+    return return_list
+
+
+def sort_sequences_by_length( names_list, sequence_list ):
+    sequence_dict = {}
+
+    out_names = list()
+    out_seqs = list()
+
+    for index in range( len( names_list ) ):
+        current_seq = sequence_list[ index ]
+        current_name = names_list[ index ]
+
+        sequence_dict[ current_seq ] = current_name
+
+    out_seqs = sorted( list( sequence_dict.keys() ), key = len ) 
+
+    for item in range( len( out_seqs ) ):
+        current_item = out_seqs[ item ]
+        out_names.append( sequence_dict[ current_item ] )
+
+    return out_names, out_seqs
+
