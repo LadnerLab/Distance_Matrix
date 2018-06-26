@@ -260,7 +260,7 @@ def get_single_sequence_dist( first_seq, second_seq, window_size, step_size ):
 
     intersection = len( first_seq_ymers & second_seq_ymers )
 
-    return intersection / len( first_seq_ymers ) * 100 
+    return ( intersection / len( first_seq_ymers ) ) * 100 
 
 
 def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_size ):
