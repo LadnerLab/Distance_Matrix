@@ -259,22 +259,33 @@ def get_single_sequence_dist( first_seq, second_seq, window_size, step_size ):
     second_seq_ymers = subset_lists_iter( second_seq, window_size, step_size )
 
     intersection = len( first_seq_ymers & second_seq_ymers )
+    average_length = ( len( first_seq_ymers ) + len( second_seq_ymers ) ) / 2 
 
-    return ( intersection / len( first_seq_ymers ) ) * 100 
+    return ( intersection / ( average_length ) * 100 )
 
 
 def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_size ):
     return_list = list()
 
-    current_xmers = subset_lists_iter( in_seq, window_size, step_size )
-
     for current_seq in sequence_list:
-        current_xmer_comparison = subset_lists_iter( current_seq, window_size, step_size )
-        intersection = len( current_xmers & current_xmer_comparison )
+        difference = get_single_sequence_dist( in_seq, current_seq, window_size, step_size )
 
-        return_list.append( ( intersection / len( current_xmers ) * 100 ) )
+        return_list.append( difference )
 
     return return_list
+
+def create_distance_matrix_of_sequences( sequence_list, window_size, step_size ):
+    distance_matrix = list()
+    for current_sequence in range( len( sequence_list) ):
+        distance_matrix.append(
+                               get_distance_from_other_sequences(
+                                                                 sequence_list[ current_sequence ],
+                                                                 sequence_list, window_size, step_size
+                                                                 )
+                              )
+    return distance_matrix
+
+        
 
 
 def sort_sequences_by_length( names_list, sequence_list ):
