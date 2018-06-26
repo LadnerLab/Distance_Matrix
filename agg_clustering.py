@@ -24,16 +24,11 @@ def main():
     sequences.reverse()
 
     out_file = open( options.output, 'w' )
-    
-    for index in range( len( sequences ) ):
-        current_distances = oligo.get_distance_from_other_sequences( sequences[ index ],
-                                                               sequences,
-                                                               options.XmerWindowSize, 1
-                                                             )
-        for item in range( len( current_distances ) ):
-            first_seq_name = ''.join( names[ index ].split()[ 0 ] ) 
-            second_seq_name = ''.join( names[ item ].split()[ 0 ] ) 
-            out_file.write( "%s\t%s\t%f\n" % ( first_seq_name, second_seq_name, 100 - current_distances[ item ] ) )
+
+    out_seqs = oligo.create_distance_matrix_of_sequences( sequences[0:10], options.XmerWindowSize, 1 )
+
+    for index in out_seqs:
+        print( index )
             
 
     out_file.close()        
