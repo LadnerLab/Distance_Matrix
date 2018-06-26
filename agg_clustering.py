@@ -23,15 +23,11 @@ def main():
     names.reverse()
     sequences.reverse()
 
-    out_file = open( options.output, 'w' )
-
     out_seqs = oligo.create_distance_matrix_of_sequences( sequences[0:10], options.XmerWindowSize, 1 )
 
     for index in out_seqs:
         print( index )
             
-
-    out_file.close()        
 
 def add_program_options( options ):
     options.add_option( '-q', '--query', help = "Fasta query file to perform calculations on. [None, required]" )
