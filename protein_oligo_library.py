@@ -255,6 +255,17 @@ def component_xmer_locs(ymer, xdict, xmer_size, step_size):
     return set(xmer_locs)
     
 def get_single_sequence_dist( first_seq, second_seq, window_size, step_size ):
+    """
+        Computes the 'distance' between two sequences, where distance is the 
+        number of shared xmers / the average of the xmers of both sequences
+
+        :param first_seq: string sequence to be compared to second sequence
+        :param second_seq: string sequence to be compared to second sequence
+        :param window_size: integer window_size to capture in subset_lists
+        :param step_size: integer step_size to use in subset_lists
+       
+        :returns: percentage of average ymers shared between between sequence first_seq and sequence second_seq
+    """
     first_seq_ymers = subset_lists_iter( first_seq, window_size, step_size )
     second_seq_ymers = subset_lists_iter( second_seq, window_size, step_size )
 
@@ -265,6 +276,18 @@ def get_single_sequence_dist( first_seq, second_seq, window_size, step_size ):
 
 
 def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_size ):
+    """
+        Computes the distance from one sequence to all of the sequence in sequence_list,
+        where distance is defined as in get_single_sequence_dist
+    
+        :param in_seq: string sequence to be compared to all sequences in sequence_list
+        :param sequence_list: list of sequences to compare to in_seq
+        :param window_size: integer window_size to capture in subset_lists
+        :param step_size: integer step_size to use in subset_lists
+    
+        :returns: list of distances from in_seq to all of the sequences in sequence_list
+
+    """
     return_list = list()
 
     for current_seq in sequence_list:
@@ -275,6 +298,17 @@ def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_
     return return_list
 
 def create_distance_matrix_of_sequences( sequence_list, window_size, step_size ):
+    """
+        Create a distance matrix from a list of sequences, where distance is defined as in 
+        get_single_sequence_distance
+
+        :param sequence_list: list of string sequences from which to construct the distance matrix
+        :param window_size: integer window_size to capture at a time from each sequence
+        :param step_size: integer step_size to use in subset_lists
+    
+
+        :returns: matrix of sequence distances, adjacency matrix of a graph
+    """
     distance_matrix = list()
     for current_sequence in range( len( sequence_list) ):
         distance_matrix.append(
