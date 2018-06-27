@@ -22,6 +22,8 @@ def main():
     names, sequences = oligo.read_fasta_lists( options.query )
     names, sequences = oligo.sort_sequences_by_length( names, sequences )
 
+    cluster_dict = {}
+
     # Get the sequences sorted in decreasing order
     names.reverse()
     sequences.reverse()
@@ -35,7 +37,6 @@ def main():
     out_list = np.delete( out_list, 0 )
 
     Z = linkage( out_list, 'single' )
-    print( Z )
 
     cluster = fcluster( Z, options.clusters, criterion ='maxclust')
     print( cluster )
@@ -43,7 +44,15 @@ def main():
     out_file = open( options.output, 'w' )
     
     for sequence in range( len( names ) ):
+        if cluster[ sequence ] not in cluster_dict:
+            cluster_dict[ cluster[ sequence ] ] = list()
+        cluster_dict[ cluster[ sequence ] ].append( sequences[ sequence ] )
+            
         out_file.write( "%d %s\n" % ( cluster[ sequence ], names[ sequence ] ) )
+
+    print( cluster_dict[ 16 ] )
+
+
     out_file.close()
 
                                         
