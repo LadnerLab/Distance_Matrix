@@ -32,7 +32,11 @@ def main():
     out_list = np.empty( 1 )
     for current_seq in range( num_seqs ):
         for inner_index in range( current_seq + 1, num_seqs ):
-            out_list = np.append( out_list, oligo.get_single_sequence_dist( sequences[ current_seq ], sequences[ inner_index ], options.XmerWindowSize, 1 ) )
+            out_list = np.append( out_list,
+                                  oligo.get_single_sequence_dist( sequences[ current_seq ],
+                                                                  sequences[ inner_index ], options.XmerWindowSize, 1
+                                                                )
+                                )
             
     out_list = np.delete( out_list, 0 )
 
