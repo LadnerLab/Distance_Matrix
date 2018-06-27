@@ -254,7 +254,7 @@ def component_xmer_locs(ymer, xdict, xmer_size, step_size):
         xmer_locs += xdict[each]
     return set(xmer_locs)
     
-def get_single_sequence_dist( first_seq, second_seq, window_size, step_size ):
+def get_single_sequence_dist( first_seq, second_seq, window_size, step_size, return_subset_ymers = False ):
     """
         Computes the 'distance' between two sequences, where distance is the 
         number of shared xmers / the average of the xmers of both sequences
@@ -263,19 +263,28 @@ def get_single_sequence_dist( first_seq, second_seq, window_size, step_size ):
         :param second_seq: string sequence to be compared to second sequence
         :param window_size: integer window_size to capture in subset_lists
         :param step_size: integer step_size to use in subset_lists
+        :param return_subset_ymers: boolean flag to return the set of a sequence's ymers
        
-        :returns: percentage of average ymers shared between between sequence first_seq and sequence second_seq
+        :returns: percentage of average ymers shared between between sequence first_seq and sequence second_seq,
+                  and also first_seq's subset ymers, if return_subset_ymers is set to true
     """
+    
     first_seq_ymers = subset_lists_iter( first_seq, window_size, step_size )
     second_seq_ymers = subset_lists_iter( second_seq, window_size, step_size )
 
     intersection = len( first_seq_ymers & second_seq_ymers )
-    average_length = ( len( first_seq_ymers ) + len( second_seq_ymers ) ) / 2 
+    average_length = min( len( first_seq_ymers ), len( second_seq_ymers ) )
 
-    return ( intersection / ( average_length ) * 100 )
+    if average_length == 0:
+        average_length = max( len( first_seq_ymers ), len( second_seq_ymers ) )
+        
+
+    if return_subset_ymers:
+        return ( ( intersection / average_length ) * 100 ), first_seq_ymers
+    return 100 - ( ( intersection / average_length ) * 100 )
 
 
-def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_size ):
+def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_size, return_ymer_list = False ):
     """
         Computes the distance from one sequence to all of the sequence in sequence_list,
         where distance is defined as in get_single_sequence_dist
@@ -288,19 +297,23 @@ def get_distance_from_other_sequences( in_seq, sequence_list, window_size, step_
         :returns: list of distances from in_seq to all of the sequences in sequence_list
 
     """
-    return_list = list()
+    return_difference_list = list()
 
     for current_seq in sequence_list:
-        difference = get_single_sequence_dist( in_seq, current_seq, window_size, step_size )
+        if return_ymer_list:
+            difference, ymers = get_single_sequence_dist( in_seq, current_seq, window_size, step_size, return_ymer_list )
+        else:
+            difference = get_single_sequence_dist( in_seq, current_seq, window_size, step_size, return_ymer_list )
 
-        return_list.append( difference )
 
-    return return_list
+        return_difference_list.append( difference )
+
+    return return_difference_list
 
 def create_distance_matrix_of_sequences( sequence_list, window_size, step_size ):
     """
         Create a distance matrix from a list of sequences, where distance is defined as in 
-        get_single_sequence_distance
+        get_single_sequence_dist
 
         :param sequence_list: list of string sequences from which to construct the distance matrix
         :param window_size: integer window_size to capture at a time from each sequence
