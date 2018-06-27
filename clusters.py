@@ -34,10 +34,10 @@ def main():
             
     out_list = np.delete( out_list, 0 )
 
-    Z = linkage( out_list, 'complete' )
+    Z = linkage( out_list, 'single' )
     print( Z )
 
-    cluster = fcluster( Z, 2, criterion ='maxclust')
+    cluster = fcluster( Z, options.clusters, criterion ='maxclust')
     print( cluster )
 
     out_file = open( options.output, 'w' )
@@ -56,6 +56,7 @@ def add_program_options( options ):
 
     # TODO: Add description of format of output file  
     options.add_option( '-o', '--output', help = "File to write program output to. [out.txt]", default = "out.txt" )
+    options.add_option( '-c', '--clusters', help = "Maximum number of clusters to produce in output. [4]", default = 4, type = int )
 
     options.add_option( '-x', '--XmerWindowSize', help = "Size of xmers to grab from each sequence to do the comparisons [19]", type = int,
                         default = 19 )
