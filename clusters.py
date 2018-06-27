@@ -71,8 +71,10 @@ def display_cluster_information( cluster_dict ):
 def add_program_options( options ):
     options.add_option( '-q', '--query', help = "Fasta query file to perform calculations on. [None, required]" )
 
-    # TODO: Add description of format of output file  
-    options.add_option( '-o', '--output', help = "File to write program output to. [out.txt]", default = "out.txt" )
+    options.add_option( '-o', '--output',
+                        help = "File to write program output to. Output is a tab-delimited file containing cluster number, and then sequence name [out.txt]",
+                        default = "out.txt"
+                      )
     options.add_option( '-c', '--clusters', help = "Maximum number of clusters to produce in output. [4]", default = 4, type = int )
 
     options.add_option( '-x', '--XmerWindowSize', help = "Size of xmers to grab from each sequence to do the comparisons [19]", type = int,
