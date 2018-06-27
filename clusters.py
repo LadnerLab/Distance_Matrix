@@ -49,22 +49,34 @@ def main():
             
         out_file.write( "%d %s\n" % ( cluster[ sequence ], names[ sequence ] ) )
 
-    display_cluster_information( cluster_dict )
+    display_cluster_information( cluster_dict, out_list )
 
     out_file.close()
 
                                         
 
-def display_cluster_information( cluster_dict ):
+def display_cluster_information( cluster_dict, list_of_distances ):
+
+    # Cluster stats
     num_clusters = len( cluster_dict.keys() )
     min_cluster_size = min( [ len( item ) for item in cluster_dict.values() ] )
     max_cluster_size = max( [ len( item ) for item in cluster_dict.values() ] )
     avg_cluster_size = sum( [ len( item ) for item in cluster_dict.values() ] ) 
 
+    # Distance stats
+    avg_distance = np.average( list_of_distances )
+    max_distance = np.amax( list_of_distances )
+    min_distance = np.amin( list_of_distances )
+    
+    
     print( "Number of clusters: %d." % num_clusters )
     print( "Minimum Cluster Size: %d." % min_cluster_size )
     print( "Maximum Cluster Size: %d." % max_cluster_size )
     print( "Average Cluster Size: %d." % avg_cluster_size )
+
+    print( "Minimum distance between any two sequences: %d" % min_distance )
+    print( "Average distance between any two sequences: %d" % avg_distance )
+    print( "Maximum distance between any two sequences: %d" % max_distance )
     
 
 
