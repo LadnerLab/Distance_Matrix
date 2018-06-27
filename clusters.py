@@ -39,7 +39,6 @@ def main():
     Z = linkage( out_list, 'single' )
 
     cluster = fcluster( Z, options.clusters, criterion ='maxclust')
-    print( cluster )
 
     out_file = open( options.output, 'w' )
     
@@ -50,14 +49,23 @@ def main():
             
         out_file.write( "%d %s\n" % ( cluster[ sequence ], names[ sequence ] ) )
 
-    print( cluster_dict[ 16 ] )
-
+    display_cluster_information( cluster_dict )
 
     out_file.close()
 
                                         
 
-        
+def display_cluster_information( cluster_dict ):
+    num_clusters = len( cluster_dict.keys() )
+    min_cluster_size = min( [ len( item ) for item in cluster_dict.values() ] )
+    max_cluster_size = max( [ len( item ) for item in cluster_dict.values() ] )
+    avg_cluster_size = sum( [ len( item ) for item in cluster_dict.values() ] ) 
+
+    print( "Number of clusters: %d." % num_clusters )
+    print( "Minimum Cluster Size: %d." % min_cluster_size )
+    print( "Maximum Cluster Size: %d." % max_cluster_size )
+    print( "Average Cluster Size: %d." % avg_cluster_size )
+    
 
 
 def add_program_options( options ):
