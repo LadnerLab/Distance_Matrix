@@ -49,7 +49,7 @@ def main():
     for sequence in range( len( names ) ):
         if cluster[ sequence ] not in cluster_dict:
             cluster_dict[ cluster[ sequence ] ] = list()
-        cluster_dict[ cluster[ sequence ] ].append( sequences[ sequence ] )
+        cluster_dict[ cluster[ sequence ] ].append( ( names[ sequence ], sequences[ sequence ] ) )
             
         out_file.write( "%d %s\n" % ( cluster[ sequence ], names[ sequence ] ) )
 
@@ -79,7 +79,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     # Distance stats
     for item in dict_values:
         if len( item ) > 1:
-            current_matrix = oligo.create_distance_matrix_of_sequences( item, window_size,
+            current_matrix = oligo.create_distance_matrix_of_sequences( [ seq[ 1 ] for seq in item ], window_size,
                                                                         step_size
 
                                                                       )
@@ -101,15 +101,24 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     avg_distance = clusters_total / cluster_seqs
     
     print( "Number of clusters: %d." % num_clusters )
-    print( "Minimum Cluster Size: %d." % min_cluster_size )
-    print( "Maximum Cluster Size: %d." % max_cluster_size )
-    print( "Average Cluster Size: %d." % avg_cluster_size )
+    print( "Minimum Cluster Size: %.2f." % min_cluster_size )
+    print( "Maximum Cluster Size: %.2f." % max_cluster_size )
+    print( "Average Cluster Size: %.2f." % avg_cluster_size )
 
-    print( "Minimum distance between any two sequences within the clusters: %d" % min_distance )
-    print( "Average distance between any two sequences within the clusters: %d" % avg_distance )
-    print( "Maximum distance between any two sequences within the clusters: %d" % max_distance )
+    print( "Minimum distance between any two sequences within the clusters: %.2f" % min_distance )
+    print( "Average distance between any two sequences within the clusters: %.2f" % avg_distance )
+    print( "Maximum distance between any two sequences within the clusters: %.2f" % max_distance )
     
 
+def get_taxid_from_name( in_name ):
+    split_name = in_name.split( 'TaxID=' )
+
+    return_name = None
+    if len( in_name ) > 1:
+        split_name = split_name[ 1 ].split()
+        return_name = split_name[ 0 ]
+    return return_name
+        
 
 def add_program_options( options ):
     options.add_option( '-q', '--query', help = "Fasta query file to perform calculations on. [None, required]" )
