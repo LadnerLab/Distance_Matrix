@@ -53,13 +53,14 @@ def main():
             
         out_file.write( "%d %s\n" % ( cluster[ sequence ], names[ sequence ] ) )
 
-    display_cluster_information( cluster_dict, out_list, options.XmerWindowSize, 1 )
+    if options.verbose:
+        display_cluster_information( cluster_dict, out_list, options.XmerWindowSize, 1, options.species )
 
     out_file.close()
 
                                         
 
-def display_cluster_information( cluster_dict, list_of_distances, window_size, step_size ):
+def display_cluster_information( cluster_dict, list_of_distances, window_size, step_size, species_file ):
 
     dict_values = cluster_dict.values()
 
@@ -74,7 +75,9 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     avg_species_per_cluster = 0
     total_species = 0
 
-    species = get_species_from_file( species_file )
+    species = None
+    if species_file:
+        species = get_species_from_file( species_file )
 
     # Cluster stats
     num_clusters = len( cluster_dict.keys() )
@@ -155,7 +158,7 @@ def add_program_options( options ):
                         default = 19 )
 
     options.add_option( '-v', help = "Display statistical output of clusters, disabled by default because this is very slow. [False]",
-                        action = 'store_true', dest = 'verbose '
+                        action = 'store_true', dest = 'verbose'
                       )  
     options.add_option( '-s', '--species', help = "File containing Taxonomic id and species names, used in addition to -v flag, very slow. [False]." )
 
