@@ -54,13 +54,13 @@ def main():
         out_file.write( "%d %s\n" % ( cluster[ sequence ], names[ sequence ] ) )
 
     if options.verbose:
-        display_cluster_information( cluster_dict, out_list, options.XmerWindowSize, 1, options.species )
+        display_cluster_information( cluster_dict, out_list, options.XmerWindowSize, 1 )
 
     out_file.close()
 
                                         
 
-def display_cluster_information( cluster_dict, list_of_distances, window_size, step_size, species_file ):
+def display_cluster_information( cluster_dict, list_of_distances, window_size, step_size ):
 
     dict_values = cluster_dict.values()
 
@@ -74,10 +74,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     # Viral stats
     avg_species_per_cluster = 0
     total_species = 0
-
-    species = None
-    if species_file:
-        species = get_species_from_file( species_file )
+    species_in_clusters = set()
 
     # Cluster stats
     num_clusters = len( cluster_dict.keys() )
@@ -88,6 +85,13 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     # Distance stats
     for item in dict_values:
         if len( item ) > 1:
+            names = [ seq[ 0 ] for seq in item ]
+            species_in_clusters = set()
+            for current_name in names:
+                id = get_taxid_from_name( current_name )
+                species_in_clusters.add( id )
+            total_species += len( species_in_clusters )
+
             current_matrix = oligo.create_distance_matrix_of_sequences( [ seq[ 1 ] for seq in item ], window_size,
                                                                         step_size
 
@@ -108,6 +112,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
             min_distance = min( local_min, min_distance )
 
     avg_distance = clusters_total / cluster_seqs
+    avg_species_per_cluster = total_species / num_clusters
     
     print( "Number of clusters: %d." % num_clusters )
     print( "Minimum Cluster Size: %.2f." % min_cluster_size )
@@ -117,6 +122,9 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     print( "Minimum distance between any two sequences within the clusters: %.2f" % min_distance )
     print( "Average distance between any two sequences within the clusters: %.2f" % avg_distance )
     print( "Maximum distance between any two sequences within the clusters: %.2f" % max_distance )
+
+    print( "Average species per cluster: %.2f" % avg_species_per_cluster )
+    print( "Average clusters per species: %.2f" % ( num_clusters / total_species ) )
 
     
 
@@ -160,11 +168,6 @@ def add_program_options( options ):
     options.add_option( '-v', help = "Display statistical output of clusters, disabled by default because this is very slow. [False]",
                         action = 'store_true', dest = 'verbose'
                       )  
-    options.add_option( '-s', '--species', help = "File containing Taxonomic id and species names, used in addition to -v flag, very slow. [False]." )
-
-                        
-
-
     
 if __name__ == '__main__':
     main()
