@@ -110,7 +110,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     print( "Maximum distance between any two sequences within the clusters: %.2f" % max_distance )
     
 
-def get_taxid_from_name( in_name ):
+ def get_taxid_from_name( in_name ):
     split_name = in_name.split( 'TaxID=' )
 
     return_name = None
@@ -118,7 +118,7 @@ def get_taxid_from_name( in_name ):
         split_name = split_name[ 1 ].split()
         return_name = split_name[ 0 ]
     return return_name
-        
+       
 
 def add_program_options( options ):
     options.add_option( '-q', '--query', help = "Fasta query file to perform calculations on. [None, required]" )
