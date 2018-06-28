@@ -53,34 +53,61 @@ def main():
             
         out_file.write( "%d %s\n" % ( cluster[ sequence ], names[ sequence ] ) )
 
-    display_cluster_information( cluster_dict, out_list )
+    display_cluster_information( cluster_dict, out_list, options.XmerWindowSize, 1 )
 
     out_file.close()
 
                                         
 
-def display_cluster_information( cluster_dict, list_of_distances ):
+def display_cluster_information( cluster_dict, list_of_distances, window_size, step_size ):
+
+    dict_values = cluster_dict.values()
+
+    clusters_total = 0
+    cluster_seqs = 0
+
+    avg_distance = 0 
+    max_distance = 0
+    min_distance = len( dict_values )
 
     # Cluster stats
     num_clusters = len( cluster_dict.keys() )
-    min_cluster_size = min( [ len( item ) for item in cluster_dict.values() ] )
-    max_cluster_size = max( [ len( item ) for item in cluster_dict.values() ] )
-    avg_cluster_size = sum( [ len( item ) for item in cluster_dict.values() ] ) 
+    min_cluster_size = min( [ len( item ) for item in dict_values ] )
+    max_cluster_size = max( [ len( item ) for item in dict_values ] )
+    avg_cluster_size = sum( [ len( item ) for item in dict_values ] ) / num_clusters
 
     # Distance stats
-    avg_distance = np.average( list_of_distances )
-    max_distance = np.amax( list_of_distances )
-    min_distance = np.amin( list_of_distances )
-    
+    for item in dict_values:
+        if len( item ) > 1:
+            current_matrix = oligo.create_distance_matrix_of_sequences( item, window_size,
+                                                                        step_size
+
+                                                                      )
+
+            matrix_array = list()
+            for current_distance in range( len( current_matrix ) ):
+                for local_distance in range( current_distance + 1, len( current_matrix ) ):
+                    matrix_array.append( current_matrix[ current_distance ][ local_distance ] )
+                    
+            clusters_total += sum( matrix_array )
+            cluster_seqs += len( matrix_array )
+
+            local_max = max( matrix_array )
+            local_min = min( matrix_array )
+
+            max_distance = max( local_max, max_distance )
+            min_distance = min( local_min, min_distance )
+
+    avg_distance = clusters_total / cluster_seqs
     
     print( "Number of clusters: %d." % num_clusters )
     print( "Minimum Cluster Size: %d." % min_cluster_size )
     print( "Maximum Cluster Size: %d." % max_cluster_size )
     print( "Average Cluster Size: %d." % avg_cluster_size )
 
-    print( "Minimum distance between any two sequences: %d" % min_distance )
-    print( "Average distance between any two sequences: %d" % avg_distance )
-    print( "Maximum distance between any two sequences: %d" % max_distance )
+    print( "Minimum distance between any two sequences within the clusters: %d" % min_distance )
+    print( "Average distance between any two sequences within the clusters: %d" % avg_distance )
+    print( "Maximum distance between any two sequences within the clusters: %d" % max_distance )
     
 
 
