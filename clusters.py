@@ -108,9 +108,11 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     print( "Minimum distance between any two sequences within the clusters: %.2f" % min_distance )
     print( "Average distance between any two sequences within the clusters: %.2f" % avg_distance )
     print( "Maximum distance between any two sequences within the clusters: %.2f" % max_distance )
+
+    get_species_from_file( 'names.dmp' )
     
 
- def get_taxid_from_name( in_name ):
+def get_taxid_from_name( in_name ):
     split_name = in_name.split( 'TaxID=' )
 
     return_name = None
@@ -118,7 +120,22 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
         split_name = split_name[ 1 ].split()
         return_name = split_name[ 0 ]
     return return_name
-       
+
+def get_species_from_file( in_file ):
+    open_file = open( in_file, 'r' )
+    taxid_dict = {}
+
+    for line in open_file:
+        line = line.split( '|' )
+        taxID = line[ 0 ].strip()
+        species = line[ 1 ].strip()
+
+        if taxID not in taxid_dict:
+            taxid_dict[ int( taxID ) ] = list()
+        taxid_dict[ taxID ].append( species )
+    open_file.close()
+
+    return taxid_dict
 
 def add_program_options( options ):
     options.add_option( '-q', '--query', help = "Fasta query file to perform calculations on. [None, required]" )
