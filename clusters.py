@@ -70,6 +70,12 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     max_distance = 0
     min_distance = len( dict_values )
 
+    # Viral stats
+    avg_species_per_cluster = 0
+    total_species = 0
+
+    species = get_species_from_file( species_file )
+
     # Cluster stats
     num_clusters = len( cluster_dict.keys() )
     min_cluster_size = min( [ len( item ) for item in dict_values ] )
@@ -109,7 +115,6 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     print( "Average distance between any two sequences within the clusters: %.2f" % avg_distance )
     print( "Maximum distance between any two sequences within the clusters: %.2f" % max_distance )
 
-    get_species_from_file( 'names.dmp' )
     
 
 def get_taxid_from_name( in_name ):
@@ -148,6 +153,13 @@ def add_program_options( options ):
 
     options.add_option( '-x', '--XmerWindowSize', help = "Size of xmers to grab from each sequence to do the comparisons [19]", type = int,
                         default = 19 )
+
+    options.add_option( '-v', help = "Display statistical output of clusters, disabled by default because this is very slow. [False]",
+                        action = 'store_true', dest = 'verbose '
+                      )  
+    options.add_option( '-s', '--species', help = "File containing Taxonomic id and species names, used in addition to -v flag, very slow. [False]." )
+
+                        
 
 
     
