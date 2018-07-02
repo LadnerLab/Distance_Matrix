@@ -102,7 +102,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     for key, item in cluster_dict.items():
         names = [ seq[ 0 ] for seq in item ]
         for current_name in names:
-            id = get_taxid_from_name( current_name )
+            id = oligo.get_taxid_from_name( current_name )
             species_from_sequences.add( id )
 
             if key not in species_per_cluster:
@@ -147,31 +147,6 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     print( "Average clusters per species: %.2f" % avg_cluster_per_species )
 
     
-
-def get_taxid_from_name( in_name ):
-    split_name = in_name.split( 'TaxID=' )
-
-    return_name = None
-    if len( split_name ) > 1:
-        split_name = split_name[ 1 ].split()
-        return_name = split_name[ 0 ]
-    return return_name
-
-def get_species_from_file( in_file ):
-    open_file = open( in_file, 'r' )
-    taxid_dict = {}
-
-    for line in open_file:
-        line = line.split( '|' )
-        taxID = line[ 0 ].strip()
-        species = line[ 1 ].strip()
-
-        if taxID not in taxid_dict:
-            taxid_dict[ int( taxID ) ] = list()
-        taxid_dict[ taxID ].append( species )
-    open_file.close()
-
-    return taxid_dict
 
 def add_program_options( options ):
     options.add_option( '-q', '--query', help = "Fasta query file to perform calculations on. [None, required]" )

@@ -364,3 +364,41 @@ def sort_sequences_by_length( names_list, sequence_list ):
 
     return out_names, out_seqs
 
+def get_taxid_from_name( in_name ):
+    """
+        Gets the taxonomic id from a sequence name
+        Note: Capable of parsing uniref and uniprot types
+
+        :param in_name: string name of genetic sequence
+        :returns: string taxonomic id of sequence
+    """
+
+    # uniref naming convention
+    split_name = in_name.split( 'TaxID=' )
+
+    # uniprot naming convention
+    if len( split_name == 1 ):
+        split_name = in_name.split( 'OX=' )
+
+    return_name = None
+    if len( split_name ) > 1:
+        split_name = split_name[ 1 ].split()
+        return_name = split_name[ 0 ]
+    return return_name
+
+
+def get_species_from_file( in_file ):
+    open_file = open( in_file, 'r' )
+    taxid_dict = {}
+
+    for line in open_file:
+        line = line.split( '|' )
+        taxID = line[ 0 ].strip()
+        species = line[ 1 ].strip()
+
+        if taxID not in taxid_dict:
+            taxid_dict[ int( taxID ) ] = list()
+        taxid_dict[ taxID ].append( species )
+    open_file.close()
+
+    return taxid_dict
