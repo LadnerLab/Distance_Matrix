@@ -29,12 +29,19 @@ def main():
     sequences.reverse()
 
     num_seqs = len( sequences )
+
+    ymer_dict = {}
+    for index in range( num_seqs ):
+        ymer_dict[ sequences[ index ] ] = oligo.subset_lists_iter( sequences[ index ], options.XmerWindowSize, 1 )
+
+    num_seqs = len( sequences )
     out_list = np.empty( 1 )
+
     for current_seq in range( num_seqs ):
         for inner_index in range( current_seq + 1, num_seqs ):
             out_list = np.append( out_list,
-                                  oligo.get_single_sequence_dist( sequences[ current_seq ],
-                                                                  sequences[ inner_index ], options.XmerWindowSize, 1
+                                  oligo.get_single_sequence_dist( ymer_dict[ sequences[ current_seq ] ],
+                                                                  ymer_dict[ sequences[ inner_index ] ], options.XmerWindowSize, 1
                                                                 )
                                 )
             
@@ -45,7 +52,7 @@ def main():
 
     Z = linkage( out_list, 'single' )
 
-    cluster = fcluster( Z, options.clusters, criterion ='maxclust')
+    cluster = fcluster( Z, options.clusters, criterion ='maxclust' )
 
     out_file = open( options.output, 'w' )
 
@@ -60,13 +67,13 @@ def main():
         out_file.write( "%d %s\n" % ( cluster[ sequence ], names[ sequence ] ) )
 
     if options.verbose:
-        display_cluster_information( cluster_dict, out_list, options.XmerWindowSize, 1 )
+        display_cluster_information( cluster_dict, out_list, options.XmerWindowSize, 1, ymer_dict )
 
     out_file.close()
 
                                         
 
-def display_cluster_information( cluster_dict, list_of_distances, window_size, step_size ):
+def display_cluster_information( cluster_dict, list_of_distances, window_size, step_size, ymer_dict = None ):
 
     dict_values = cluster_dict.values()
 
@@ -103,7 +110,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
             species_per_cluster[ key ].add( id )
 
         current_matrix = oligo.create_distance_matrix_of_sequences( [ seq[ 1 ] for seq in item ], window_size,
-                                                                    step_size
+                                                                    step_size, ymer_dict 
 
                                                                   )
         if len( item ) > 1:
