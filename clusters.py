@@ -152,7 +152,7 @@ def get_taxid_from_name( in_name ):
     split_name = in_name.split( 'TaxID=' )
 
     return_name = None
-    if len( in_name ) > 1:
+    if len( split_name ) > 1:
         split_name = split_name[ 1 ].split()
         return_name = split_name[ 0 ]
     return return_name
