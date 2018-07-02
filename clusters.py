@@ -81,6 +81,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     avg_species_per_cluster = 0
     num_species = 0
     species_from_sequences = set()
+    species_per_cluster = {}
 
     
 
@@ -92,17 +93,20 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
 
     # Distance stats
     for key, item in cluster_dict.items():
+        names = [ seq[ 0 ] for seq in item ]
+        for current_name in names:
+            id = get_taxid_from_name( current_name )
+            species_from_sequences.add( id )
+
+            if key not in species_per_cluster:
+                species_per_cluster[ key ] = set()
+            species_per_cluster[ key ].add( id )
+
+        current_matrix = oligo.create_distance_matrix_of_sequences( [ seq[ 1 ] for seq in item ], window_size,
+                                                                    step_size
+
+                                                                  )
         if len( item ) > 1:
-            names = [ seq[ 0 ] for seq in item ]
-            for current_name in names:
-                id = get_taxid_from_name( current_name )
-                species_from_sequences.add( id )
-
-            current_matrix = oligo.create_distance_matrix_of_sequences( [ seq[ 1 ] for seq in item ], window_size,
-                                                                        step_size
-
-                                                                      )
-
             matrix_array = list()
             for current_distance in range( len( current_matrix ) ):
                 for local_distance in range( current_distance + 1, len( current_matrix ) ):
@@ -119,7 +123,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
 
     num_species = len( species_from_sequences )
     avg_distance = clusters_total / cluster_seqs
-    avg_species_per_cluster = num_species / num_clusters
+    avg_species_per_cluster = ( sum( [ len( item ) for item in species_per_cluster.values() ] ) / num_clusters )
     avg_cluster_per_species = num_clusters / num_species
     
     print( "\nNumber of clusters: %d." % num_clusters )
