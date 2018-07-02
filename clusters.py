@@ -40,11 +40,17 @@ def main():
             
     out_list = np.delete( out_list, 0 )
 
+    if options.verbose:
+        print( "Distance Matrix complete" )
+
     Z = linkage( out_list, 'single' )
 
     cluster = fcluster( Z, options.clusters, criterion ='maxclust')
 
     out_file = open( options.output, 'w' )
+
+    if options.verbose:
+        print( "Clustering Complete" )
     
     for sequence in range( len( names ) ):
         if cluster[ sequence ] not in cluster_dict:
@@ -74,6 +80,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     # Viral stats
     avg_species_per_cluster = 0
     total_species = 0
+    clusters_and_species = {}
 
     # Cluster stats
     num_clusters = len( cluster_dict.keys() )
@@ -82,13 +89,17 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     avg_cluster_size = sum( [ len( item ) for item in dict_values ] ) / num_clusters
 
     # Distance stats
-    for item in dict_values:
+    for key, item in cluster_dict.items():
         if len( item ) > 1:
             names = [ seq[ 0 ] for seq in item ]
+            if key not in clusters_and_species:
+                clusters_and_species[ key ] = set()
             species_in_clusters = set()
             for current_name in names:
                 id = get_taxid_from_name( current_name )
                 species_in_clusters.add( id )
+
+                clusters_and_species[ key ].add( id )
 
             total_species += len( species_in_clusters )
 
@@ -113,7 +124,8 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
 
     avg_distance = clusters_total / cluster_seqs
     avg_species_per_cluster = total_species / num_clusters
-    avg_cluster_per_species = num_clusters / total_species 
+    avg_cluster_per_species = num_clusters / sum( [ len( item ) \
+                                     for item in clusters_and_species.values () ] ) 
     
     print( "Number of clusters: %d." % num_clusters )
     print( "Minimum Cluster Size: %.2f." % min_cluster_size )
