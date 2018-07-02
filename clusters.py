@@ -79,8 +79,10 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
 
     # Viral stats
     avg_species_per_cluster = 0
-    total_species = 0
-    clusters_and_species = {}
+    num_species = 0
+    species_from_sequences = set()
+
+    
 
     # Cluster stats
     num_clusters = len( cluster_dict.keys() )
@@ -92,16 +94,9 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     for key, item in cluster_dict.items():
         if len( item ) > 1:
             names = [ seq[ 0 ] for seq in item ]
-            if key not in clusters_and_species:
-                clusters_and_species[ key ] = set()
-            species_in_clusters = set()
             for current_name in names:
                 id = get_taxid_from_name( current_name )
-                species_in_clusters.add( id )
-
-                clusters_and_species[ key ].add( id )
-
-            total_species += len( species_in_clusters )
+                species_from_sequences.add( id )
 
             current_matrix = oligo.create_distance_matrix_of_sequences( [ seq[ 1 ] for seq in item ], window_size,
                                                                         step_size
@@ -122,12 +117,12 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
             max_distance = max( local_max, max_distance )
             min_distance = min( local_min, min_distance )
 
+    num_species = len( species_from_sequences )
     avg_distance = clusters_total / cluster_seqs
-    avg_species_per_cluster = total_species / num_clusters
-    avg_cluster_per_species = num_clusters / sum( [ len( item ) \
-                                     for item in clusters_and_species.values () ] ) 
+    avg_species_per_cluster = num_species / num_clusters
+    avg_cluster_per_species = num_clusters / num_species
     
-    print( "Number of clusters: %d." % num_clusters )
+    print( "\nNumber of clusters: %d." % num_clusters )
     print( "Minimum Cluster Size: %.2f." % min_cluster_size )
     print( "Maximum Cluster Size: %.2f." % max_cluster_size )
     print( "Average Cluster Size: %.2f.\n" % avg_cluster_size )
@@ -136,7 +131,7 @@ def display_cluster_information( cluster_dict, list_of_distances, window_size, s
     print( "Average distance between any two sequences within the clusters: %.2f" % avg_distance )
     print( "Maximum distance between any two sequences within the clusters: %.2f\n" % max_distance )
 
-    print( "Number of species found in file: %d" % total_species )
+    print( "Number of species found in file: %d" % num_species )
     print( "Average species per cluster: %.2f" % avg_species_per_cluster )
     print( "Average clusters per species: %.2f" % avg_cluster_per_species )
 
